@@ -107,11 +107,13 @@ def binds(fobj):
     binds = struct.unpack("<I", fobj.read(4))[0]
     
     for i in range(binds):
-        influences = struct.unpack("<I", fobj.read(4))[0] # numbers of bones which affects this vertex 
+        influences = struct.unpack("<I", fobj.read(4))[0] # numbers of bones which affects this vertex
         for j in range(influences):
             seek(2, fobj)
             bone = struct.unpack("<H", fobj.read(2))[0] # bone idx
             weight = struct.unpack("f", fobj.read(4))   # bone to vtx weight
+
+        
 
 def vertex(fobj):
     vertex = []
@@ -499,9 +501,15 @@ print("EOF")
 objgen()
 parent()
 elu.close()
-skincluster = ("Crt_UPbody_Ff%s" % ("_SC"))
-print(skincluster)
-cmds.skinCluster("Bip01","Crt_UPbody_Ff",n=skincluster)
+skincluster0 = ("Crt_UPbody_Ff%s" % ("_SC"))
+skincluster1 = ("Crt_Hand_Ff%s" % ("_SC"))
+skincluster2 = ("Object002%s" % ("_SC"))
+cmds.skinCluster("Bip01","Crt_UPbody_Ff",n=skincluster0)
+cmds.skinCluster("Bip01","Crt_Hand_Ff",n=skincluster1)
+cmds.skinCluster("Bip01","Object002",n=skincluster2)
+print(skincluster0)
+print(skincluster1)
+print(skincluster2) 
 print("EOS")
 
 ########################################################################
