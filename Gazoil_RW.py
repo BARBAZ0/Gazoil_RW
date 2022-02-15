@@ -458,7 +458,6 @@ def objgen():
         objects[j][dag].append(dagpath)
 
 def parent():
-
     for j in range(len(objects)):
 
         if(objects[j][pidx][0] != 0xFFFFFFFF):
@@ -474,11 +473,12 @@ def skincluster():
     
 def skinpercent():
     for j in range(len(objects)):
-        loopcount = 0
         if(objects[j][obj][0] == "msh"):
             for k in range(len(objects[j][pos][0])):
-                loopcount += 1
-                print(loopcount)
+                #debug
+                #cmds.skinPercent("%s_SC" % (objects[j][nam][0]),"%s.vtx",objects[k][bvtx][0])  
+                #cmds.skinPercent( 'skinCluster1', 'pPlane1.vtx[100]', query=True, value=True)
+                print(k)
                 
 
 ########################################################################
