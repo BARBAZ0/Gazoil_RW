@@ -15,7 +15,6 @@ def matrix(fobj):
 def positions(fobj):
     MPositions = om.MPointArray()
     positions = struct.unpack("<I", fobj.read(4))[0]
-    print(positions)
 
     for i in range(positions):
         x , y , z = struct.unpack("<3f", fobj.read(12))
@@ -112,8 +111,9 @@ def binds(fobj):
         for j in range(influences):
             seek(2, fobj)
             bone = struct.unpack("<H", fobj.read(2))[0] # bone idx
-            objects[-1][bvtx].append(bone)
             weight = struct.unpack("f", fobj.read(4))   # bone to vtx weight
+            print(bone, weight)
+            objects[-1][bvtx].append(bone)
             objects[-1][bvtx].append(weight)
             
 
@@ -294,7 +294,7 @@ def import_5014(fobj):
     faces14(fobj)
     ukn12(fobj)
     seek(4, fobj)
-    print("Offset : %x" % (fobj.tell()))
+    #print("Offset : %x" % (fobj.tell()))
     binds(fobj)
     seek(4, fobj)
     vertex14(fobj)
@@ -437,7 +437,6 @@ def objgen():
             tnode.setTransformation(tmtx)
 
         elif(objects[j][obj][0] == "msh"):
-            print(objects[j][nam][0])
             cmds.select(all=True, deselect=True)
             mesh = meshFn.create(objects[j][pos][0],objects[j][fac][0],objects[j][con][0])
             if(len(objects[j][utx][0]) & len(objects[j][vtx][0])):
@@ -465,12 +464,22 @@ def parent():
         if(objects[j][pidx][0] != 0xFFFFFFFF):
             cmds.parent(objects[j][nam][0], objects[objects[j][pidx][0]][nam][0], relative=True)
 
-def skin():
-    
+def skincluster():
+    loopindex = 0
     for j in range(len(objects)):
         if(objects[j][obj][0] == "msh"):
-            cmds.skinCluster("Bip01",objects[j][nam][0])
-
+            skincluster = "%s_SC" % (objects[j][nam][0])
+            print(skincluster)
+            cmds.skinCluster("Bip01",objects[j][nam][0],n=skincluster)
+    
+def skinpercent():
+    for j in range(len(objects)):
+        loopcount = 0
+        if(objects[j][obj][0] == "msh"):
+            for k in range(len(objects[j][pos][0])):
+                loopcount += 1
+                print(loopcount)
+                
 
 ########################################################################
 ##### code instructions #####
@@ -514,10 +523,13 @@ cmds.skinCluster("Bip01","Object002",n=skincluster2)
 print(skincluster0)
 print(skincluster1)
 print(skincluster2)
-for i in range(len(objects)):
-    print(objects[i][obj][0])
 """
-skin()
+"""
+for i in range(len(objects)):
+    print(objects[i][bvtx])
+"""
+skincluster()
+skinpercent()
 print("EOS")
 
 ########################################################################
