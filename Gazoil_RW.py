@@ -15,6 +15,7 @@ def matrix(fobj):
 def positions(fobj):
     MPositions = om.MPointArray()
     positions = struct.unpack("<I", fobj.read(4))[0]
+    print(positions)
 
     for i in range(positions):
         x , y , z = struct.unpack("<3f", fobj.read(12))
@@ -111,9 +112,10 @@ def binds(fobj):
         for j in range(influences):
             seek(2, fobj)
             bone = struct.unpack("<H", fobj.read(2))[0] # bone idx
+            objects[-1][bvtx].append(bone)
             weight = struct.unpack("f", fobj.read(4))   # bone to vtx weight
-
-        
+            objects[-1][bvtx].append(weight)
+            
 
 def vertex(fobj):
     vertex = []
@@ -292,6 +294,7 @@ def import_5014(fobj):
     faces14(fobj)
     ukn12(fobj)
     seek(4, fobj)
+    print("Offset : %x" % (fobj.tell()))
     binds(fobj)
     seek(4, fobj)
     vertex14(fobj)
@@ -461,12 +464,12 @@ def parent():
 
         if(objects[j][pidx][0] != 0xFFFFFFFF):
             cmds.parent(objects[j][nam][0], objects[objects[j][pidx][0]][nam][0], relative=True)
-"""
+
 def skin():
     
     for j in range(len(objects)):
-        if(objects[nam]):
-"""
+        if(objects[j][obj][0] == "msh"):
+            cmds.skinCluster("Bip01",objects[j][nam][0])
 
 
 ########################################################################
@@ -501,7 +504,8 @@ print("EOF")
 objgen()
 parent()
 elu.close()
-skincluster0 = ("Crt_UPbody_Ff%s" % ("_SC"))
+# Debug 
+"""skincluster0 = ("Crt_UPbody_Ff%s" % ("_SC"))
 skincluster1 = ("Crt_Hand_Ff%s" % ("_SC"))
 skincluster2 = ("Object002%s" % ("_SC"))
 cmds.skinCluster("Bip01","Crt_UPbody_Ff",n=skincluster0)
@@ -509,7 +513,11 @@ cmds.skinCluster("Bip01","Crt_Hand_Ff",n=skincluster1)
 cmds.skinCluster("Bip01","Object002",n=skincluster2)
 print(skincluster0)
 print(skincluster1)
-print(skincluster2) 
+print(skincluster2)
+for i in range(len(objects)):
+    print(objects[i][obj][0])
+"""
+skin()
 print("EOS")
 
 ########################################################################
