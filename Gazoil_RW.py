@@ -104,18 +104,23 @@ def faces14(fobj):
 
 def binds(fobj):
     binds = []
-    binds = struct.unpack("<I", fobj.read(4))[0]
     
+    binds = struct.unpack("<I", fobj.read(4))[0]
+    print(binds)
+
     for i in range(binds):
         influences = struct.unpack("<I", fobj.read(4))[0] # numbers of bones which affects this vertex
+        print (influences) 
+        objects[-1][inf].append(influences) 
         for j in range(influences):
             seek(2, fobj)
             bone = struct.unpack("<H", fobj.read(2))[0] # bone idx
             weight = struct.unpack("f", fobj.read(4))   # bone to vtx weight
-            print(bone, weight)
-            objects[-1][bvtx].append(bone)
-            objects[-1][bvtx].append(weight)
-            
+            objects[-1][bon].append(bone)
+            objects[-1][wei].append(weight)
+            print(bone) 
+            print(weight)
+
 
 def vertex(fobj):
     vertex = []
@@ -384,6 +389,10 @@ class Index(IntEnum):
     blendvertices = 14
     dagpath = 15
     facetextcoords = 16
+    influences = 17
+    bone = 18
+    weight = 19
+
     
 # Aliases
 
@@ -404,6 +413,9 @@ find = Index.facesindices
 bvtx = Index.blendvertices
 dag  = Index.dagpath
 ftxt = Index.facetextcoords
+inf  = Index.influences 
+bon  = Index.bone
+wei  = Index.weight
 
 # Functions definitions
 
@@ -477,8 +489,7 @@ def skinpercent():
             for k in range(len(objects[j][pos][0])):
                 #debug
                 #cmds.skinPercent("%s_SC" % (objects[j][nam][0]),"%s.vtx",objects[k][bvtx][0])  
-                #cmds.skinPercent( 'skinCluster1', 'pPlane1.vtx[100]', query=True, value=True)
-                print(k)
+                cmds.skinPercent( '%s_SC'%(objects[j][nam][0]), '%s.vtx[%s]'%(objects[j][nam][0],k), transformValue=[(objects[j][nam][0], objects[j][bvtx][1])])
                 
 
 ########################################################################
@@ -523,13 +534,13 @@ cmds.skinCluster("Bip01","Object002",n=skincluster2)
 print(skincluster0)
 print(skincluster1)
 print(skincluster2)
-"""
-"""
+
 for i in range(len(objects)):
     print(objects[i][bvtx])
 """
 skincluster()
 skinpercent()
+
 print("EOS")
 
 ########################################################################
